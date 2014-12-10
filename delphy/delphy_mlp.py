@@ -9,6 +9,8 @@ Multiple Preceptron Network
 import numpy;
 import theano;
 import theano.tensor as T;
+import pylearn2;
+
 from physics import PHYSICS;
 
 
@@ -22,6 +24,6 @@ train_set = PHYSICS(which_set='train', benchmark=benchmark, derived_feat=derived
 valid_set = PHYSICS(which_set='valid', benchmark=benchmark, derived_feat=derived_feat);
 test_set  = PHYSICS(which_set='set', benchmark=benchmark, derived_feat=derived_feat);
 
-print "[MESSAGE] DATASET IS LOADED";
-
 ## BUILD MODEL
+
+model=pylearn2.models.mlp.MLP();
