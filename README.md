@@ -14,6 +14,7 @@ DeLPhy (Deep Learning for Physics) is a set of deep learning algorithms with foc
    ```
    Python 2.7.8
    Theano 0.6.0
+   PyLearn 2
    numpy
    scipy
    matplotlib
@@ -25,6 +26,11 @@ DeLPhy (Deep Learning for Physics) is a set of deep learning algorithms with foc
 ## Updates
 
 ## Notes
+
++ Dataset preparation is adpated from UCI's GitHub project, the origin of the project can be founded here:
+   ```
+   https://github.com/uci-igb/higgs-susy
+   ```
 
 ## Contacts
 
