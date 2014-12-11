@@ -49,9 +49,26 @@ test_set  = PHYSICS(which_set='test',
 
 ## BUILD MODEL
 
+#model=pylearn2.models.mlp.MLP(layers=[mlp.Tanh(layer_name='hidden_0',
+#                                               dim=300,
+#                                               istdev=0.1),
+#                                      mlp.Sigmoid(layer_name='y',
+#                                                 dim=1,
+#                                                 istdev=0.01)],
+#                              nvis=nvis);
+
 model=pylearn2.models.mlp.MLP(layers=[mlp.Tanh(layer_name='hidden_0',
                                                dim=300,
                                                istdev=0.1),
+                                      mlp.Tanh(layer_name='hidden_1',
+                                               dim=300,
+                                               istdev=.05),
+                                      mlp.Tanh(layer_name='hidden_2',
+                                               dim=300,
+                                               istdev=.05),
+                                      mlp.Tanh(layer_name='hidden_3',
+                                               dim=300,
+                                               istdev=.05),                                      
                                       mlp.Sigmoid(layer_name='y',
                                                  dim=1,
                                                  istdev=0.01)],
@@ -72,8 +89,8 @@ algorithm=pylearn2.training_algorithms.sgd.SGD(batch_size=100,
                                                                                                                                                            N=40),
                                                                                                                 pylearn2.termination_criteria.EpochCounter(max_epochs=momentum_saturate)]),
                                                cost = pylearn2.costs.mlp.dropout.Dropout(
-                                                   input_include_probs={'hidden_0':1., 'y':0.5},
-                                                   input_scales={ 'hidden_0': 1., 'y':2.}),
+                                                   input_include_probs={'hidden_0':1., 'hidden_1':1., 'hidden_2':1., 'hidden_3':1., 'y':0.5},
+                                                   input_scales={ 'hidden_0': 1., 'hidden_1':1., 'hidden_2':1., 'hidden_3':1., 'y':2.}),
                                                
                                                update_callbacks=pylearn2.training_algorithms.sgd.ExponentialDecay(
                                                    decay_factor=1.0000003, # Decreases by this factor every batch. (1/(1.000001^8000)^100 

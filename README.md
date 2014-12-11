@@ -25,6 +25,8 @@ DeLPhy (Deep Learning for Physics) is a set of deep learning algorithms with foc
 
 ## Updates
 
++ Experiment with SUSY using MLP is updated [2014-12-11]
+
 ## Notes
 
 + Dataset preparation is adpated from UCI's GitHub project, the origin of the project can be founded here:
