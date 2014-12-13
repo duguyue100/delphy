@@ -59,15 +59,15 @@ def get_autoencoder(structure):
 idpath = os.path.splitext(os.path.abspath(__file__))[0]; # ID for output files.
 save_path = idpath + '.pkl';
 momentum_saturate=200;
-max_epochs=10;
+max_epochs=200;
 
 ## HIGGS
 benchmark=2; ## SUSY dataset
 derived_feat=True;
 nvis=18;
-#train_set = PHYSICS(which_set='train',
-#                    benchmark=benchmark,
-#                    derived_feat=derived_feat);
+train_set = PHYSICS(which_set='train',
+                    benchmark=benchmark,
+                    derived_feat=derived_feat);
 train_monitor = PHYSICS(which_set='train',
                         benchmark=benchmark,
                         derived_feat=derived_feat,
@@ -99,7 +99,7 @@ print '[MESSAGE] The Layer 1 model is built.';
 
 l1_save_path="./delphy_sae_l1.pkl";
 
-l1_train=Train(dataset=train_monitor,
+l1_train=Train(dataset=train_set,
                model=l1_model,
                algorithm=l1_algo,
                save_path=l1_save_path,
@@ -117,7 +117,7 @@ print '[MESSAGE] The Layer 1 is trained';
 
 # LAYER 2
 
-l1_train_set=TransformerDataset(raw=train_monitor,
+l1_train_set=TransformerDataset(raw=train_set,
                                 transformer=l1_model);
 
 print '[MESSAGE] L1 Trained dataset transformed';
@@ -169,7 +169,7 @@ model=mlp.MLP(layers=[mlp.PretrainedLayer(layer_name='hidden_0',
 
 algo=SGD(batch_size=100,
          learning_rate=0.05,
-         monitoring_dataset={'train': train_monitor,
+         monitoring_dataset={'train': train_set,
                              'valid': valid_set,
                              'test' : test_set},
          termination_criterion=Or(criteria=[MonitorBased(channel_name="valid_objective",
@@ -182,7 +182,7 @@ algo=SGD(batch_size=100,
          update_callbacks=ExponentialDecay(decay_factor=1.0000003,
                                            min_lr=.000001));
 
-train=Train(dataset=train_monitor,
+train=Train(dataset=train_set,
             model=model,
             algorithm=algo,
             save_path=save_path,
