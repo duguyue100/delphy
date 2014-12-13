@@ -119,6 +119,9 @@ print '[MESSAGE] The Layer 1 is trained';
 
 l1_train_set=TransformerDataset(raw=train_set,
                                 transformer=l1_model);
+l1_train_monitor=TransformerDataset(raw=train_monitor,
+                                transformer=l1_model);
+
 
 print '[MESSAGE] L1 Trained dataset transformed';
 
@@ -129,7 +132,7 @@ l2_model=Autoencoder(nvis=300,
 
 l2_algo=SGD(batch_size=100,
             learning_rate=1e-3,
-            monitoring_dataset=l1_train_set,
+            monitoring_dataset=l1_train_monitor,
             cost=SumOfCosts([MeanSquaredReconstructionError()]),
             termination_criterion=EpochCounter(max_epochs=max_epochs));
 
@@ -169,7 +172,7 @@ model=mlp.MLP(layers=[mlp.PretrainedLayer(layer_name='hidden_0',
 
 algo=SGD(batch_size=100,
          learning_rate=0.05,
-         monitoring_dataset={'train': train_set,
+         monitoring_dataset={'train': train_monitor,
                              'valid': valid_set,
                              'test' : test_set},
          termination_criterion=Or(criteria=[MonitorBased(channel_name="valid_objective",
