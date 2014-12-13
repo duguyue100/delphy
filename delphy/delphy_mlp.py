@@ -28,7 +28,7 @@ save_path = idpath + '.pkl';
 momentum_saturate=200;
 
 ## HIGGS
-benchmark=2; ## higgs dataset
+benchmark=2; ## SUSY dataset
 derived_feat=True;
 nvis=18;
 train_set = PHYSICS(which_set='train',
