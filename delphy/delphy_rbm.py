@@ -16,19 +16,12 @@ import pylearn2.models.mlp as mlp;
 
 from pylearn2.models.rbm import RBM;
 
-from pylearn2.models.dbm.dbm import DBM;
-from pylearn2.model.dbm.layer import GaussianVisLayer;
-from pylearn2.model.dbm.layer import BinaryLayer;
-from pylearn2.model.dbm.layer import BinaryVectorMaxPool;
 import pylearn2.training_algorithms.sgd
 from pylearn2.training_algorithms.sgd import SGD;
 import pylearn2.termination_criteria
 from pylearn2.termination_criteria import EpochCounter;
 from pylearn2.training_algorithms.sgd import ExponentialDecay;
 from pylearn2.costs.cost import SumOfCosts;
-from pylearn2.costs.dbm import VariationalPCD;
-from pylearn2.costs.dbm import WeightDecay;
-from pylearn2.costs.dbm import TorontoSparsity;
 from pylearn2.training_algorithms.learning_rule import MomentumAdjustor;
 import pylearn2.train
 
@@ -115,7 +108,7 @@ print '[MESSAGE] Layer 1 model is built';
 
 rbm_l2_savepath='delphy_rbm_l2.pkl';
 
-rbm_l2_train=Train(dataset=l1_train_monitor,
+rbm_l2_train=Train(dataset=l1_train_set,
                    model=rbm_layer_2,
                    algorithm=rbm_l2_algo,
                    save_path=rbm_l2_savepath,
