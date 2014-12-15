@@ -12,21 +12,25 @@ import numpy;
 import theano;
 import theano.tensor as T;
 import pylearn2;
-import pylearn2.models.mlp as mlp;
 
+import pylearn2.models.mlp as mlp;
 from pylearn2.models.rbm import RBM;
 
 import pylearn2.training_algorithms.sgd
 from pylearn2.training_algorithms.sgd import SGD;
+from pylearn2.training_algorithms.sgd import ExponentialDecay;
+from pylearn2.training_algorithms.learning_rule import MomentumAdjustor;
+
 import pylearn2.termination_criteria
 from pylearn2.termination_criteria import EpochCounter;
-from pylearn2.training_algorithms.sgd import ExponentialDecay;
+
 from pylearn2.costs.cost import SumOfCosts;
 from pylearn2.costs.autoencoder import MeanSquaredReconstructionError;
-from pylearn2.training_algorithms.learning_rule import MomentumAdjustor;
-import pylearn2.train
-from pylearn2.datasets.transformer_dataset import TransformerDataset;
 
+import pylearn2.train
+from pylearn2.train import Train;
+
+from pylearn2.datasets.transformer_dataset import TransformerDataset;
 
 from physics import PHYSICS;
 
