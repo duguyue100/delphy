@@ -85,7 +85,7 @@ test_set  = PHYSICS(which_set='test',
 # LAYER 1
 
 l1_model=Autoencoder(nvis=nvis,
-                     nhid=300,
+                     nhid=600,
                      act_enc="tanh",
                      act_dec="linear");
 
@@ -125,8 +125,8 @@ l1_train_monitor=TransformerDataset(raw=train_monitor,
 
 print '[MESSAGE] L1 Trained dataset transformed';
 
-l2_model=Autoencoder(nvis=300,
-                     nhid=300,
+l2_model=Autoencoder(nvis=600,
+                     nhid=600,
                      act_enc="tanh",
                      act_dec="linear");
 

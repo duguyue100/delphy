@@ -13,6 +13,9 @@ import theano;
 import theano.tensor as T;
 import pylearn2;
 import pylearn2.models.mlp as mlp;
+
+from pylearn2.models.rbm import RBM;
+
 from pylearn2.models.dbm.dbm import DBM;
 from pylearn2.model.dbm.layer import GaussianVisLayer;
 from pylearn2.model.dbm.layer import BinaryLayer;
@@ -37,6 +40,7 @@ from physics import PHYSICS;
 idpath = os.path.splitext(os.path.abspath(__file__))[0]; # ID for output files.
 save_path = idpath + '.pkl';
 momentum_saturate=200;
+max_epochs=200;
 
 ## HIGGS
 benchmark=2; ## SUSY dataset
@@ -59,66 +63,71 @@ test_set  = PHYSICS(which_set='test',
 
 ## Layers
 
-visLayer=BinaryLayer(nvis=nvis,
-                     bias_from_marginals=train_set);
+rbm_layer_1=RBM(nvis=nvis,
+                nhid=300,
+                monitor_reconstruction=True);
 
-hidLayer_1=BinaryVectorMaxPool(layer_name="hidden_1",
-                               detector_layer_dim=300,
-                               pool_size=1,
-                               irange=0.05,
-                               init_bias=-2.0);
+rbm_l1_algo=SGD(batch_size=100,
+                learning_rate=1e-3,
+                monitoring_dataset=train_monitor,
+                cost=SumOfCosts([MeanSquaredReconstructionError()]),
+                termination_criterion=EpochCounter(max_epochs=max_epochs));
 
-hidLayer_2=BinaryVectorMaxPool(layer_name="hidden_2",
-                               detector_layer_dim=300,
-                               pool_size=1,
-                               irange=0.05,
-                               init_bias=-2.0);
+print '[MESSAGE] Layer 1 model is built';
 
-## Model
+rbm_l1_savepath='delphy_rbm_l1.pkl';
 
-model=DBM(batch_size=100,
-          visible_layer=visLayer,
-          hidden_layer=[hidLayer_1, hidLayer_2],
-          niter=1);
-
-## ALGORITHM
-
-max_epochs=300;
-
-algorithm=SGD(learning_rate=1e-3,
-              monitoring_dataset={'train':train_monitor},
-              termination_criterion=EpochCounter(max_epochs=max_epochs),
-              cost = SumOfCosts(costs=[VariationalPCD(num_chains=100,
-                                                      num_gibbs_steps=5),
-                                       WeightDecay(coeffs=[0.0001,
-                                                           0.0001]),
-                                       TorontoSparsity(targets=[0.2,
-                                                                0.2],
-                                                       coeffs=[0.001,
-                                                               0.001])]),
-              update_callbacks=ExponentialDecay(decay_factor=1.0000003,
-                                                min_lr=.000001));
-
-
-## EXTENSION
-
-extensions=[MomentumAdjustor(start=0,
-                             saturate=max_epochs,
-                             final_momentum=.99)];
-
-## TRAINING MODEL
-
-train=pylearn2.train.Train(dataset=train_set,
-                           model=model,
-                           algorithm=algorithm,
-                           save_path=save_path,
-                           save_freq=100);
+rbm_l1_train=Train(dataset=train_set,
+                   model=rbm_layer_1,
+                   algorithm=rbm_l1_algo,
+                   save_path=rbm_l1_savepath,
+                   save_freq=50);
 
 debug = False
-logfile = os.path.splitext(train.save_path)[0] + '.log'
+rbm_l1_logfile = 'delphy_rbm_l1.log';
 print 'Using=%s' % theano.config.device # Can use gpus. 
-print 'Writing to %s' % logfile
-print 'Writing to %s' % train.save_path
-sys.stdout = open(logfile, 'w')
+print 'Writing to %s' % rbm_l1_savepath
+#sys.stdout = open(l1_logfile, 'w')
 
-train.main_loop();
+rbm_l1_train.main_loop();
+
+print '[MESSAGE] The Layer 1 is trained';
+
+
+l1_train_set=TransformerDataset(raw=train_set,
+                                transformer=l1_model);
+l1_train_monitor=TransformerDataset(raw=train_monitor,
+                                transformer=l1_model);
+
+print '[MESSAGE] Layer 1 Data is transformed'
+
+rbm_layer_2=RBM(nvis=300,
+                nhid=300,
+                monitor_reconstruction=True);
+
+rbm_l2_algo=SGD(batch_size=100,
+                learning_rate=1e-3,
+                monitoring_dataset=l1_train_monitor,
+                cost=SumOfCosts([MeanSquaredReconstructionError()]),
+                termination_criterion=EpochCounter(max_epochs=max_epochs));
+
+print '[MESSAGE] Layer 1 model is built';
+
+rbm_l2_savepath='delphy_rbm_l2.pkl';
+
+rbm_l2_train=Train(dataset=l1_train_monitor,
+                   model=rbm_layer_2,
+                   algorithm=rbm_l2_algo,
+                   save_path=rbm_l2_savepath,
+                   save_freq=50);
+
+debug = False
+rbm_l2_logfile = 'delphy_rbm_l2.log';
+print 'Using=%s' % theano.config.device # Can use gpus. 
+print 'Writing to %s' % rbm_l2_savepath
+#sys.stdout = open(l1_logfile, 'w')
+
+rbm_l2_train.main_loop();
+
+print '[MESSAGE] The Layer 2 is trained';
+
