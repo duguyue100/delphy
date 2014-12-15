@@ -26,6 +26,7 @@ from pylearn2.termination_criteria import EpochCounter;
 
 from pylearn2.costs.cost import SumOfCosts;
 from pylearn2.costs.autoencoder import MeanSquaredReconstructionError;
+from pylearn2.costs.ebm_estimation import SML;
 
 import pylearn2.train
 from pylearn2.train import Train;
@@ -70,7 +71,8 @@ rbm_layer_1=RBM(nvis=nvis,
 rbm_l1_algo=SGD(batch_size=100,
                 learning_rate=1e-3,
                 monitoring_dataset=train_monitor,
-                cost=SumOfCosts([MeanSquaredReconstructionError()]),
+                cost=SML(batch_size=100,
+                         nsteps=10),
                 termination_criterion=EpochCounter(max_epochs=max_epochs));
 
 print '[MESSAGE] Layer 1 model is built';
@@ -108,7 +110,8 @@ rbm_layer_2=RBM(nvis=300,
 rbm_l2_algo=SGD(batch_size=100,
                 learning_rate=1e-3,
                 monitoring_dataset=l1_train_monitor,
-                cost=SumOfCosts([MeanSquaredReconstructionError()]),
+                cost=SML(batch_size=100,
+                         nsteps=10),
                 termination_criterion=EpochCounter(max_epochs=max_epochs));
 
 print '[MESSAGE] Layer 1 model is built';
@@ -130,4 +133,3 @@ print 'Writing to %s' % rbm_l2_savepath
 rbm_l2_train.main_loop();
 
 print '[MESSAGE] The Layer 2 is trained';
-
